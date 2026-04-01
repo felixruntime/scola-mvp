@@ -25,6 +25,7 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--tx);font-siz
 #landing{display:block}
 #login-page{display:none;min-height:100vh;align-items:center;justify-content:center;background:var(--bg);padding:40px}
 #app-wrap{display:none;height:100vh;flex-direction:row;overflow:hidden}
+.w100{width:100%}
 
 /* ════ LANDING ════ */
 .navbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(245,242,236,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);padding:0 48px;height:64px;display:flex;align-items:center;justify-content:space-between}
@@ -288,7 +289,7 @@ tbody tr.sel td{background:var(--ac-lt)}
     <a class="nav-a" href="#about">Sobre</a>
     <a class="nav-a" href="#features">Funcionalidades</a>
     <a class="nav-a" href="#pricing">Preços</a>
-    <button class="nav-cta" onclick="showLogin()">Entrar</button>
+    <button class="nav-cta" onclick="document.getElementById('role-picker').style.display='flex';document.getElementById('role-picker').scrollIntoView({behavior:'smooth'})">Entrar</button>
   </div>
 </nav>
 
@@ -298,8 +299,27 @@ tbody tr.sel td{background:var(--ac-lt)}
     <h1>Gestão escolar que<br><em>pensa por você</em></h1>
     <p class="hero-sub">O único sistema com Inteligência Artificial que prevê reprovações antes que aconteçam, prioriza solicitações automaticamente e gera pautas de reunião para cada aluno.</p>
     <div class="hero-btns">
-      <button class="btn-hp" onclick="showLogin()">Acessar o sistema</button>
+      <button class="btn-hp" onclick="document.getElementById('role-picker').style.display='flex'">Acessar o sistema →</button>
       <button class="btn-hs" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Ver funcionalidades</button>
+    </div>
+
+    <!-- ROLE PICKER INLINE -->
+    <div id="role-picker" style="display:none;flex-direction:column;align-items:center;gap:12px;margin-top:32px;animation:fu .2s ease">
+      <p style="font-size:13px;color:var(--mu);font-weight:600">Selecione o perfil para visualizar:</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+        <button onclick="entrarComo('coordenador')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 24px;border-radius:12px;border:2px solid var(--bd);background:var(--sf);cursor:pointer;font-family:Syne,sans-serif;font-size:13px;font-weight:700;transition:.15s;min-width:120px" onmouseover="this.style.borderColor='var(--ac)';this.style.background='var(--ac-lt)';this.style.color='var(--ac)'" onmouseout="this.style.borderColor='var(--bd)';this.style.background='var(--sf)';this.style.color='var(--tx)'">
+          <span style="font-size:28px">🏫</span>Coordenador
+        </button>
+        <button onclick="entrarComo('professor')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 24px;border-radius:12px;border:2px solid var(--bd);background:var(--sf);cursor:pointer;font-family:Syne,sans-serif;font-size:13px;font-weight:700;transition:.15s;min-width:120px" onmouseover="this.style.borderColor='var(--ac)';this.style.background='var(--ac-lt)';this.style.color='var(--ac)'" onmouseout="this.style.borderColor='var(--bd)';this.style.background='var(--sf)';this.style.color='var(--tx)'">
+          <span style="font-size:28px">👨‍🏫</span>Professor
+        </button>
+        <button onclick="entrarComo('responsavel')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 24px;border-radius:12px;border:2px solid var(--bd);background:var(--sf);cursor:pointer;font-family:Syne,sans-serif;font-size:13px;font-weight:700;transition:.15s;min-width:120px" onmouseover="this.style.borderColor='var(--ac)';this.style.background='var(--ac-lt)';this.style.color='var(--ac)'" onmouseout="this.style.borderColor='var(--bd)';this.style.background='var(--sf)';this.style.color='var(--tx)'">
+          <span style="font-size:28px">👨‍👧</span>Responsável
+        </button>
+        <button onclick="entrarComo('secretaria')" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 24px;border-radius:12px;border:2px solid var(--bd);background:var(--sf);cursor:pointer;font-family:Syne,sans-serif;font-size:13px;font-weight:700;transition:.15s;min-width:120px" onmouseover="this.style.borderColor='var(--ac)';this.style.background='var(--ac-lt)';this.style.color='var(--ac)'" onmouseout="this.style.borderColor='var(--bd)';this.style.background='var(--sf)';this.style.color='var(--tx)'">
+          <span style="font-size:28px">🗂️</span>Secretaria
+        </button>
+      </div>
     </div>
     <div class="hero-stats">
       <div class="text-center"><span class="hs-num">348</span><span class="hs-lbl">Alunos gerenciados</span></div>
@@ -439,7 +459,7 @@ tbody tr.sel td{background:var(--ac-lt)}
       <div class="plan-f">Chat professor-família</div>
       <div class="plan-f">Solicitações de documentos</div>
       <div class="plan-f">Suporte por e-mail</div>
-      <button class="plan-btn" onclick="showLogin()">Começar agora</button>
+      <button class="plan-btn" onclick="entrarComo('coordenador')">Começar agora</button>
     </div>
     <div class="plan feat">
       <div class="plan-badge">MAIS POPULAR</div>
@@ -453,7 +473,7 @@ tbody tr.sel td{background:var(--ac-lt)}
       <div class="plan-f">Agendamentos + Microsoft Teams</div>
       <div class="plan-f">Painel analítico avançado</div>
       <div class="plan-f">Suporte prioritário</div>
-      <button class="plan-btn" onclick="showLogin()">Começar agora</button>
+      <button class="plan-btn" onclick="entrarComo('coordenador')">Começar agora</button>
     </div>
     <div class="plan">
       <div class="plan-name">ENTERPRISE</div>
@@ -466,7 +486,7 @@ tbody tr.sel td{background:var(--ac-lt)}
       <div class="plan-f ai">✦ Agente de triagem autônomo</div>
       <div class="plan-f">API dedicada + dados INEP</div>
       <div class="plan-f">SLA 99.9% garantido</div>
-      <button class="plan-btn" onclick="showLogin()">Falar com vendas</button>
+      <button class="plan-btn" onclick="entrarComo('coordenador')">Falar com vendas</button>
     </div>
   </div>
 </section>
@@ -535,7 +555,13 @@ tbody tr.sel td{background:var(--ac-lt)}
     <div class="topbar">
       <span class="topbar-title" id="topTitle">Dashboard</span>
       <div class="fl2 aic g12">
-        <button class="btn btn-s btn-sm" onclick="showToast('📬 3 novas notificações')">🔔 Notificações</button>
+        <select onchange="entrarComo(this.value)" style="background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:5px 10px;font-size:12px;font-family:Syne,sans-serif;cursor:pointer;outline:none" title="Trocar perfil">
+          <option value="coordenador" id="opt-coord">🏫 Coordenador</option>
+          <option value="professor" id="opt-prof">👨‍🏫 Professor</option>
+          <option value="responsavel" id="opt-resp">👨‍👧 Responsável</option>
+          <option value="secretaria" id="opt-secr">🗂️ Secretaria</option>
+        </select>
+        <button class="btn btn-s btn-sm" onclick="showToast('📬 3 novas notificações')">🔔</button>
         <span class="badge b-ai">✦ IA Ativa</span>
       </div>
     </div>
@@ -890,15 +916,30 @@ const NAV_ITEMS = {
 // ════════════════════════════════════
 //  NAVIGATION PAGES
 // ════════════════════════════════════
+function entrarComo(role){
+  ROLE = role
+  document.getElementById('landing').style.display='none'
+  document.getElementById('login-page').style.display='none'
+  const appWrap = document.getElementById('app-wrap')
+  appWrap.style.display='flex'
+  appWrap.style.height='100vh'
+  appWrap.style.flexDirection='row'
+  appWrap.style.overflow='hidden'
+  setTimeout(()=>{ buildUI(); goTo('dashboard') }, 30)
+}
+
 function showLanding(){
   document.getElementById('landing').style.display='block'
   document.getElementById('login-page').style.display='none'
   document.getElementById('app-wrap').style.display='none'
 }
 function showLogin(){
-  document.getElementById('landing').style.display='none'
-  document.getElementById('login-page').style.display='flex'
-  document.getElementById('app-wrap').style.display='none'
+  // redireciona para o picker na landing
+  showLanding()
+  setTimeout(()=>{
+    document.getElementById('role-picker').style.display='flex'
+    document.getElementById('role-picker').scrollIntoView({behavior:'smooth'})
+  },100)
 }
 function showApp(){
   document.getElementById('landing').style.display='none'
@@ -913,10 +954,7 @@ function selectRole(r,btn){
   btn.classList.add('sel')
 }
 function doLogin(){
-  ROLE = selectedRole
-  showApp()
-  buildUI()
-  goTo('dashboard')
+  entrarComo(selectedRole)
 }
 
 // ════════════════════════════════════
@@ -927,6 +965,9 @@ function buildUI(){
   document.getElementById('sbAv').textContent = u.av
   document.getElementById('sbName').textContent = u.nome
   document.getElementById('sbRole').textContent = u.label
+  // Sincroniza select do topbar
+  const sel = document.querySelector('#app-wrap select')
+  if(sel) sel.value = ROLE
   buildNav()
 }
 
@@ -945,13 +986,16 @@ function buildNav(){
 }
 
 function goTo(page){
-  curPage = page
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
-  const el = document.getElementById('pg-'+page)
-  if(el) el.classList.add('active')
-  document.getElementById('topTitle').textContent = getPageTitle(page)
-  buildNav()
-  renderPage(page)
+  try {
+    curPage = page
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
+    const el = document.getElementById('pg-'+page)
+    if(el) el.classList.add('active')
+    const tt = document.getElementById('topTitle')
+    if(tt) tt.textContent = getPageTitle(page)
+    buildNav()
+    try { renderPage(page) } catch(e){ console.error('renderPage error:',page,e) }
+  } catch(e){ console.error('goTo error:',e) }
 }
 
 function getPageTitle(p){
@@ -977,9 +1021,12 @@ function renderPage(p){
 //  DASHBOARD
 // ════════════════════════════════════
 function renderDash(){
+  try {
   const u = ROLE_USERS[ROLE]
-  document.getElementById('dashGreet').textContent = `Olá, ${u.nome.split(' ')[0]} 👋`
-  document.getElementById('dashDate').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})
+  const dg = document.getElementById('dashGreet')
+  const dd = document.getElementById('dashDate')
+  if(dg) dg.textContent = `Olá, ${u.nome.split(' ')[0]} 👋`
+  if(dd) dd.textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})
 
   document.getElementById('dashStats').innerHTML = [
     {l:"Total de alunos",v:"348",c:"var(--ac)",tr:"↑ 12 novas matrículas"},
@@ -1006,6 +1053,7 @@ function renderDash(){
     <div class="text-xs text-mu">📅 ${r.data} às ${r.hora} · ${r.teams?'📹 Teams':'📍 '+r.local}</div>
     <div class="text-xs text-mu mt-4">👤 ${r.resp}</div>
   </div>`).join('')
+  } catch(e){ console.error('renderDash error:',e) }
 }
 
 // ════════════════════════════════════
@@ -1159,7 +1207,7 @@ function renderChatMsgs(convs,id){
   document.getElementById('chatMsgs').innerHTML = conv.msgs.map(m=>{
     const side = m.de==='eu'?'sent':'recv'
     const av = side==='recv'?`<div class="msg-av">${conv.av}</div>`:''
-    const check = side==='sent'?(m.lida?'<span style="color:rgba(255,255,255,.6);font-size:10px">✓✓</span>':'<span style="color:rgba(255,255,255,.35);font-size:10px">✓</span>')
+    const check = side==='sent'?(m.lida?'<span style="color:rgba(255,255,255,.6);font-size:10px">✓✓</span>':'<span style="color:rgba(255,255,255,.35);font-size:10px">✓</span>'):''
     return `<div class="msg ${side}">${av}<div><div class="msg-bbl">${m.txt}</div><div class="msg-time">${m.hora} ${side==='sent'?check:''}</div></div></div>`
   }).join('')
   const el = document.getElementById('chatMsgs')

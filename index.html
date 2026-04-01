@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scola — Sistema de Gestão Escolar com IA</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sidebar-bg: #0f1117;
+  --sidebar-w: 240px;
+  --surface: #ffffff;
+  --bg: #f4f5f7;
+  --border: #e8e9ec;
+  --text: #0f1117;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --accent-light: #eff6ff;
+  --accent-border: #bfdbfe;
+  --amber: #d97706;
+  --amber-light: #fffbeb;
+  --amber-border: #fde68a;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --green-border: #a7f3d0;
+  --red: #dc2626;
+  --red-light: #fef2f2;
+  --red-border: #fecaca;
+  --purple: #7c3aed;
+  --purple-light: #f5f3ff;
+  --purple-border: #ddd6fe;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.logo-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.logo-text span { color: #60a5fa; }
+
+.logo-sub {
+  font-size: 10px;
+  color: rgba(255,255,255,0.3);
+  margin-top: 2px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.05em;
+}
+
+.role-selector {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.role-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  font-family: 'DM Mono', monospace;
+}
+
+.role-select {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: #fff;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  outline: none;
+}
+
+.role-select option { background: #1e2030; color: #fff; }
+
+.nav {
+  flex: 1;
+  padding: 12px 10px;
+  overflow-y: auto;
+}
+
+.nav-section {
+  margin-bottom: 20px;
+}
+
+.nav-section-label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.1em;
+  padding: 0 10px;
+  margin-bottom: 4px;
+  font-family: 'DM Mono', monospace;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.5);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+
+.nav-item.active {
+  background: rgba(37,99,235,0.2);
+  color: #93c5fd;
+  border-color: rgba(37,99,235,0.3);
+}
+
+.nav-item .icon { font-size: 15px; width: 18px; text-align: center; }
+
+.nav-badge {
+  margin-left: auto;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 100px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.nav-ai-badge {
+  margin-left: auto;
+  background: rgba(217,119,6,0.2);
+  color: #fbbf24;
+  font-size: 9px;
+  font-family: 'DM Mono', monospace;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid rgba(217,119,6,0.3);
+}
+
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.user-name { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 500; }
+.user-role { font-size: 10px; color: rgba(255,255,255,0.3); }
+
+/* ── MAIN ── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.topbar-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  color: var(--text);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notif-btn {
+  position: relative;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+
+.notif-btn:hover { background: var(--bg); }
+
+.notif-dot {
+  position: absolute;
+  top: 4px; right: 4px;
+  width: 7px; height: 7px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 1px solid #fff;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.card-body { padding: 20px; }
+
+/* ── GRID ── */
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+
+/* ── STAT CARD ── */
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+}
+
+.stat-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.stat-value { font-size: 28px; font-weight: 700; font-family: 'DM Serif Display', serif; line-height: 1; margin-bottom: 6px; }
+.stat-trend { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+.trend-up { color: var(--green); }
+.trend-down { color: var(--red); }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.badge-red    { background: var(--red-light);    color: var(--red);    border-color: var(--red-border); }
+.badge-amber  { background: var(--amber-light);  color: var(--amber);  border-color: var(--amber-border); }
+.badge-green  { background: var(--green-light);  color: var(--green);  border-color: var(--green-border); }
+.badge-blue   { background: var(--accent-light); color: var(--accent); border-color: var(--accent-border); }
+.badge-purple { background: var(--purple-light); color: var(--purple); border-color: var(--purple-border); }
+.badge-ai     { background: var(--amber-light);  color: var(--amber);  border-color: var(--amber-border); font-family: 'DM Mono', monospace; font-size: 10px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.btn-primary   { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--bg); }
+.btn-ghost     { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--bg); color: var(--text); }
+.btn-danger    { background: var(--red-light); color: var(--red); border: 1px solid var(--red-border); }
+.btn-sm        { padding: 5px 12px; font-size: 12px; }
+.btn-green     { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+.btn-green:hover { background: #d1fae5; }
+
+/* ── TABLE ── */
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: var(--bg); }
+th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #fafafa; }
+
+/* ── AI CARD ── */
+.ai-block {
+  background: var(--amber-light);
+  border: 1px solid var(--amber-border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.ai-block-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ai-block-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: #92400e;
+}
+
+.ai-block-body {
+  font-size: 12px;
+  color: #78350f;
+  line-height: 1.6;
+}
+
+/* ── RISK RING ── */
+.risk-ring { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+
+/* ── SPARKLINE ── */
+.sparkline { display: flex; align-items: center; gap: 4px; }
+
+/* ── CHAT ── */
+.chat-layout { display: flex; height: calc(100vh - 56px - 56px); gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.chat-sidebar { width: 280px; border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+.chat-search { padding: 12px; border-bottom: 1px solid var(--border); }
+.chat-search input { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; font-size: 12px; outline: none; font-family: 'DM Sans', sans-serif; }
+.chat-list { flex: 1; overflow-y: auto; }
+.chat-item { padding: 12px 14px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.1s; }
+.chat-item:hover { background: var(--bg); }
+.chat-item.active { background: var(--accent-light); border-left: 3px solid var(--accent); }
+.chat-item-name { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+.chat-item-sub { font-size: 11px; color: var(--muted); }
+.chat-item-preview { font-size: 11px; color: var(--muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+.chat-unread { background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 100px; float: right; margin-top: 2px; }
+.chat-main { flex: 1; display: flex; flex-direction: column; }
+.chat-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.chat-messages { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+.msg { display: flex; gap: 10px; max-width: 72%; }
+.msg.sent { align-self: flex-end; flex-direction: row-reverse; }
+.msg-bubble { padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.5; }
+.msg.recv .msg-bubble { background: var(--bg); border-radius: 14px 14px 14px 4px; }
+.msg.sent .msg-bubble { background: var(--accent); color: #fff; border-radius: 14px 14px 4px 14px; }
+.msg-time { font-size: 10px; color: var(--muted); margin-top: 4px; }
+.msg.sent .msg-time { text-align: right; color: rgba(255,255,255,0.6); }
+.msg-avatar { width: 28px; height: 28px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--muted); flex-shrink: 0; align-self: flex-end; }
+.chat-input { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-end; }
+.chat-input textarea { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px; font-size: 13px; font-family: 'DM Sans', sans-serif; resize: none; outline: none; max-height: 100px; }
+.chat-input textarea:focus { border-color: var(--accent); }
+
+/* ── MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border-radius: 14px; padding: 28px; width: 100%; max-width: 480px; box-shadow: var(--shadow-lg); animation: modalIn 0.2s ease; max-height: 90vh; overflow-y: auto; }
+@keyframes modalIn { from { opacity:0; transform: scale(0.96) translateY(8px); } to { opacity:1; transform: none; } }
+.modal-title { font-family: 'DM Serif Display', serif; font-size: 20px; margin-bottom: 4px; }
+.modal-sub { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+
+/* ── FORM ── */
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px; }
+.form-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  background: var(--surface);
+  transition: border-color 0.15s;
+}
+.form-input:focus { border-color: var(--accent); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ── PROGRESS ── */
+.progress-steps { display: flex; align-items: center; gap: 0; margin: 16px 0; }
+.progress-step { display: flex; flex-direction: column; align-items: center; position: relative; }
+.progress-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--muted); z-index: 1; }
+.progress-dot.done { background: var(--green); border-color: var(--green); color: #fff; }
+.progress-dot.current { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+.progress-line { width: 60px; height: 2px; background: var(--border); margin-bottom: 18px; }
+.progress-line.done { background: var(--green); }
+.progress-label { font-size: 10px; color: var(--muted); margin-top: 4px; position: absolute; top: 30px; white-space: nowrap; }
+
+/* ── PANEL ── */
+.side-panel { width: 340px; flex-shrink: 0; }
+
+/* ── TAG ── */
+.tag { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: 500; background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+
+/* ── TOGGLE ── */
+.toggle { position: relative; width: 36px; height: 20px; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: #e5e7eb; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+.toggle-slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; top: 2px; background: #fff; border-radius: 50%; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.toggle input:checked + .toggle-slider { background: var(--accent); }
+.toggle input:checked + .toggle-slider:before { transform: translateX(16px); }
+
+/* ── TOAST ── */
+.toast { display: none; position: fixed; bottom: 24px; right: 24px; background: #0f1117; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 13px; z-index: 200; animation: toastIn 0.3s ease; box-shadow: var(--shadow-lg); max-width: 320px; }
+.toast.show { display: block; }
+@keyframes toastIn { from { opacity:0; transform: translateY(12px); } }
+
+/* ── AGENDA TABS ── */
+.tabs { display: flex; gap: 2px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 3px; width: fit-content; }
+.tab-btn { padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+.tab-btn.active { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+
+/* ── MISC ── */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.gap-20 { gap: 20px; }
+.gap-24 { gap: 24px; }
+.mb-4 { margin-bottom: 4px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-24 { margin-bottom: 24px; }
+.mt-4 { margin-top: 4px; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.text-sm { font-size: 12px; }
+.text-xs { font-size: 11px; }
+.text-muted { color: var(--muted); }
+.font-600 { font-weight: 600; }
+.font-700 { font-weight: 700; }
+.text-accent { color: var(--accent); }
+.text-red { color: var(--red); }
+.text-green { color: var(--green); }
+.text-amber { color: var(--amber); }
+.w-full { width: 100%; }
+.rounded { border-radius: 8px; }
+.overflow-hidden { overflow: hidden; }
+.cursor-pointer { cursor: pointer; }
+
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom: 24px; }
+.page-title { font-family: 'DM Serif Display', serif; font-size: 26px; line-height: 1.2; margin-bottom: 4px; }
+.page-desc { font-size: 13px; color: var(--muted); }
+
+/* ── ALUNO ROW ── */
+.aluno-row { cursor: pointer; transition: background 0.1s; }
+.aluno-row:hover td { background: #f8faff; }
+.aluno-row.selected td { background: var(--accent-light); }
+
+/* ── PANEL SLIDE ── */
+.panel-container { display: flex; gap: 20px; }
+.panel-main { flex: 1; min-width: 0; }
+.detail-panel { width: 320px; flex-shrink: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; display: none; }
+.detail-panel.open { display: block; }
+
+/* ── SCORE RING SVG ── */
+.score-wrap { display: flex; align-items: center; gap: 14px; }
+
+/* ── BAR ── */
+.bar-wrap { flex: 1; height: 6px; background: var(--bg); border-radius: 100px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 100px; transition: width 0.5s ease; }
+
+/* Animation */
+@keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: none; } }
+.animate-in { animation: fadeIn 0.25s ease forwards; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">Sco<span>la</span></div>
+    <div class="logo-sub">gestão escolar com ia</div>
+  </div>
+
+  <div class="role-selector">
+    <div class="role-label">VISUALIZAR COMO</div>
+    <select class="role-select" id="roleSelect" onchange="changeRole(this.value)">
+      <option value="coordenador">🏫 Coordenador</option>
+      <option value="professor">👨‍🏫 Professor</option>
+      <option value="responsavel">👨‍👧 Responsável</option>
+      <option value="secretaria">🗂️ Secretaria</option>
+    </select>
+  </div>
+
+  <nav class="nav" id="navMenu"></nav>
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar" id="userAvatar">AC</div>
+      <div>
+        <div class="user-name" id="userName">Ana Coordenadora</div>
+        <div class="user-role" id="userRoleLabel">Coordenadora Pedagógica</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="topbar-right">
+      <button class="notif-btn" onclick="showToast('📬 3 novas notificações')">
+        🔔
+        <span class="notif-dot"></span>
+      </button>
+      <div class="badge badge-ai">✦ IA Ativa</div>
+    </div>
+  </div>
+
+  <div class="content" id="mainContent">
+
+    <!-- ── PAGE: DASHBOARD ── -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">Olá, <span id="dashGreeting">Ana</span> 👋</div>
+        <div class="page-desc">Aqui está o resumo pedagógico do dia — <span id="dashDate"></span></div>
+      </div>
+
+      <div class="grid-4 mb-24">
+        <div class="stat-card">
+          <div class="stat-label">Total de alunos</div>
+          <div class="stat-value" style="color:var(--accent)">348</div>
+          <div class="stat-trend"><span class="trend-up">↑</span> 12 novas matrículas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Média geral</div>
+          <div class="stat-value" style="color:var(--amber)">7.4</div>
+          <div class="stat-trend"><span class="trend-down">↓</span> -0.3 vs bimestre anterior</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Mensagens hoje</div>
+          <div class="stat-value" style="color:var(--purple)">23</div>
+          <div class="stat-trend">5 não lidas aguardando</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Reuniões pendentes</div>
+          <div class="stat-value" style="color:var(--green)">8</div>
+          <div class="stat-trend">3 aguardando confirmação</div>
+        </div>
+      </div>
+
+      <!-- Risk Panel -->
+      <div class="card mb-24">
+        <div class="card-header">
+          <div class="flex items-center gap-8">
+            <span style="font-size:18px">⚠️</span>
+            <span class="card-title">Alunos em risco de reprovação</span>
+            <span class="badge badge-ai">✦ ML · Random Forest</span>
+          </div>
+          <span class="text-xs text-muted">Dados: Censo Escolar INEP 2023</span>
+        </div>
+        <div id="riskTable"></div>
+        <div style="padding:12px 20px; background:var(--bg); border-top:1px solid var(--border); border-radius:0 0 var(--radius) var(--radius);">
+          <span class="text-xs text-muted">Score calculado via Random Forest · features: frequência, média parcial, ocorrências, distorção idade-série</span>
+        </div>
+      </div>
+
+      <!-- Activity Feed -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Atividade recente</span>
+          </div>
+          <div class="card-body" style="padding:0">
+            <div id="activityFeed"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Próximas reuniões</span>
+          </div>
+          <div class="card-body" style="padding:0">
+            <div id="upcomingMeetings"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: BOLETIM ── -->
+    <div class="page" id="page-boletim">
+      <div class="page-header">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="page-title">Boletim Digital</div>
+            <div class="page-desc">Notas, análise por disciplina e plano individual com IA</div>
+          </div>
+          <div class="flex gap-8">
+            <select class="form-input" style="width:120px" id="boletimTurma">
+              <option>Turma 9A</option>
+              <option>Turma 8B</option>
+              <option>Turma 7C</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Disciplina tabs -->
+      <div class="flex gap-8 mb-16" id="disciplinaTabs"></div>
+
+      <!-- AI card for discipline -->
+      <div class="ai-block mb-16" id="disciplinaAICard"></div>
+
+      <div class="panel-container">
+        <div class="panel-main">
+          <div class="card overflow-hidden">
+            <div class="card-header">
+              <span class="card-title" id="boletimTableTitle">Turma 9A · Matemática</span>
+              <div class="flex items-center gap-8">
+                <span style="font-size:12px">🧠</span>
+                <span class="text-xs text-muted">Anomalia de nota ativa</span>
+              </div>
+            </div>
+            <div id="boletimTable"></div>
+          </div>
+        </div>
+
+        <div class="detail-panel" id="boletimPanel">
+          <div id="boletimPanelContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: MENSAGENS ── -->
+    <div class="page" id="page-mensagens">
+      <div class="page-header">
+        <div class="page-title">Mensagens</div>
+        <div class="page-desc">Canal seguro professor-família · restrito ao par por aluno</div>
+      </div>
+      <div class="chat-layout">
+        <div class="chat-sidebar">
+          <div class="chat-search">
+            <input type="text" placeholder="🔍  Buscar conversa..." oninput="filterChats(this.value)">
+          </div>
+          <div class="chat-list" id="chatList"></div>
+        </div>
+        <div class="chat-main">
+          <div class="chat-header" id="chatHeader"></div>
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input">
+            <textarea id="chatInput" rows="1" placeholder="Digite uma mensagem... (Enter para enviar)"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+              oninput="autoResize(this)"></textarea>
+            <button class="btn btn-primary" onclick="sendMessage()">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: SOLICITAÇÕES ── -->
+    <div class="page" id="page-solicitacoes">
+      <div class="page-header">
+        <div class="page-title" id="solicitacoesTitle">Solicitações</div>
+        <div class="page-desc" id="solicitacoesDesc">Solicite documentos e acompanhe o status em tempo real</div>
+      </div>
+
+      <!-- Responsável: cards de nova solicitação -->
+      <div id="solicitacoesCards" class="mb-24">
+        <div class="font-600 mb-12">Nova solicitação</div>
+        <div class="grid-4" id="tiposGrid"></div>
+      </div>
+
+      <!-- Tabela de acompanhamento -->
+      <div>
+        <div class="flex items-center justify-between mb-12">
+          <div class="font-600" id="solicitacoesTableLabel">Minhas solicitações</div>
+          <div class="flex gap-8" id="solicitacoesFilters"></div>
+        </div>
+        <div class="card overflow-hidden" id="solicitacoesTableCard">
+          <div id="solicitacoesTable"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: AGENDAMENTOS ── -->
+    <div class="page" id="page-agendamentos">
+      <div class="page-header">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="page-title">Agendamentos</div>
+            <div class="page-desc">Reuniões com pais e responsáveis · integração Microsoft Teams</div>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('modalNovaReuniao')">＋ Nova reunião</button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-12 mb-20">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchAgendaTab('reunioes', this)">📅 Reuniões</button>
+          <button class="tab-btn" onclick="switchAgendaTab('ia', this)">✦ IA — Agenda inteligente <span class="badge badge-ai" style="margin-left:4px">Teams</span></button>
+        </div>
+      </div>
+
+      <div id="agendaTabReunioes">
+        <div class="grid-4 mb-20" id="agendaStats"></div>
+        <div class="flex gap-8 mb-16" id="agendaFilters"></div>
+        <div id="agendaList" class="flex flex-col gap-12"></div>
+      </div>
+
+      <div id="agendaTabIA" style="display:none">
+        <div class="ai-block mb-20">
+          <div class="ai-block-header">
+            <span style="font-size:18px">🧠</span>
+            <span class="ai-block-title">Análise de Prioridades — IA</span>
+            <span class="badge badge-ai">LLM + ML</span>
+          </div>
+          <div class="ai-block-body">
+            A IA analisou notas, frequência, ocorrências e histórico de comunicação de todos os alunos e ordenou as reuniões por urgência educacional. Compromissos confirmados são adicionados automaticamente ao Microsoft Teams com link gerado e notificação 24h antes.
+            <div class="mt-8" style="font-family:'DM Mono',monospace;font-size:10px;color:#92400e">
+              endpoint: /api/v1/ia/priorizar-agenda · última análise: hoje 08:00
+            </div>
+          </div>
+        </div>
+        <div id="iaPrioridadeList" class="flex flex-col gap-12"></div>
+      </div>
+    </div>
+
+    <!-- ── PAGE: ALUNOS ── -->
+    <div class="page" id="page-alunos">
+      <div class="page-header">
+        <div class="page-title">Alunos</div>
+        <div class="page-desc">Gerencie alunos e acompanhe o score de risco individual</div>
+      </div>
+
+      <div class="grid-3 mb-20" id="alunosStats"></div>
+
+      <div class="flex gap-12 mb-16">
+        <input type="text" class="form-input" style="max-width:260px" placeholder="🔍  Buscar aluno..." oninput="filterAlunos(this.value)">
+        <select class="form-input" style="width:120px" onchange="filterAlunosTurma(this.value)">
+          <option value="">Todas as turmas</option>
+          <option>9A</option><option>8B</option><option>7C</option>
+        </select>
+        <select class="form-input" style="width:140px" onchange="filterAlunosRisco(this.value)">
+          <option value="">Todos os riscos</option>
+          <option value="alto">Alto risco</option>
+          <option value="medio">Médio risco</option>
+          <option value="baixo">Baixo risco</option>
+        </select>
+      </div>
+
+      <div class="panel-container">
+        <div class="panel-main">
+          <div class="card overflow-hidden">
+            <div class="card-header">
+              <span class="card-title" id="alunosCount">6 alunos</span>
+              <div class="flex items-center gap-8">
+                <span style="font-size:12px">🧠</span>
+                <span class="text-xs text-muted">Score de risco via ML · INEP</span>
+              </div>
+            </div>
+            <div id="alunosTable"></div>
+          </div>
+        </div>
+        <div class="detail-panel" id="alunoPanel">
+          <div id="alunoPanelContent"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ── MODAL: NOVA REUNIÃO ── -->
+<div class="modal-overlay" id="modalNovaReuniao">
+  <div class="modal">
+    <div class="modal-title">Nova reunião</div>
+    <div class="modal-sub">Preencha os dados e gere a pauta com IA</div>
+
+    <div class="form-group">
+      <label class="form-label">Aluno</label>
+      <select class="form-input" id="reuniaoAluno" onchange="resetPauta()">
+        <option>Rafael Oliveira</option>
+        <option>Lucas Ferreira</option>
+        <option>Ana Paula Silva</option>
+        <option>Beatriz Santos</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Data</label>
+        <input type="date" class="form-input" value="2026-04-07">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Hora</label>
+        <input type="time" class="form-input" value="14:00">
+      </div>
+    </div>
+
+    <!-- Teams toggle -->
+    <div class="ai-block mb-16" style="background:var(--accent-light);border-color:var(--accent-border)">
+      <div class="ai-block-header" style="justify-content:space-between">
+        <div class="flex items-center gap-8">
+          <span>📹</span>
+          <span style="font-weight:600;font-size:13px;color:#1e3a5f">Microsoft Teams</span>
+          <span class="badge badge-blue">Integração</span>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="teamsToggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="ai-block-body" style="color:#1e40af;font-size:12px">
+        Link do Teams será gerado automaticamente e enviado ao responsável por e-mail com 24h de antecedência.
+      </div>
+    </div>
+
+    <!-- Pauta IA -->
+    <div class="ai-block mb-20">
+      <div class="ai-block-header" style="justify-content:space-between">
+        <div class="flex items-center gap-8">
+          <span>✦</span>
+          <span class="ai-block-title">Pauta automática — IA</span>
+          <span class="badge badge-ai">LLM</span>
+        </div>
+        <button class="btn btn-sm" style="background:var(--amber-light);color:var(--amber);border:1px solid var(--amber-border);font-size:11px" onclick="gerarPauta()" id="btnGerarPauta">✦ Gerar pauta</button>
+      </div>
+      <div class="ai-block-body" id="pautaContent">
+        A IA analisará o histórico do aluno — notas, frequência e ocorrências — e sugerirá os tópicos mais relevantes para a reunião.
+      </div>
+    </div>
+
+    <div class="flex gap-12" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:20px">
+      <span style="font-size:14px">⏰</span>
+      <span class="text-sm text-muted">Notificação automática enviada com mínimo de <strong>24 horas</strong> de antecedência.</span>
+    </div>
+
+    <div class="flex gap-12">
+      <button class="btn btn-ghost w-full" onclick="closeModal('modalNovaReuniao')">Cancelar</button>
+      <button class="btn btn-primary w-full" onclick="salvarReuniao()">📹 Agendar reunião</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: SOLICITAÇÃO ── -->
+<div class="modal-overlay" id="modalSolicitacao">
+  <div class="modal">
+    <div class="modal-title" id="modalSolTitulo"></div>
+    <div class="modal-sub">Confirmar abertura de solicitação</div>
+
+    <div class="card mb-16" style="background:var(--bg)">
+      <div class="card-body" style="padding:14px 16px">
+        <div class="flex justify-between mb-8">
+          <span class="text-muted text-sm">Tipo</span>
+          <span class="font-600 text-sm" id="modalSolTipo"></span>
+        </div>
+        <div class="flex justify-between mb-8">
+          <span class="text-muted text-sm">Prazo estimado</span>
+          <span class="font-600 text-sm text-green" id="modalSolPrazo"></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-muted text-sm">Notificação</span>
+          <span class="font-600 text-sm">E-mail + app</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-block mb-20">
+      <div class="ai-block-header">
+        <span>✦</span>
+        <span class="ai-block-title">Triagem automática — IA</span>
+        <span class="badge badge-ai">Agente</span>
+      </div>
+      <div class="ai-block-body">
+        A IA analisará seu perfil e a urgência da solicitação automaticamente. O SLA será ajustado conforme necessário para priorizar casos críticos.
+      </div>
+    </div>
+
+    <div class="flex gap-12">
+      <button class="btn btn-ghost w-full" onclick="closeModal('modalSolicitacao')">Cancelar</button>
+      <button class="btn btn-primary w-full" id="modalSolConfirmar">Confirmar solicitação</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  DATA
+// ════════════════════════════════════════════════════════
+const ALUNOS = [
+  { id:1, nome:"Rafael Oliveira",  turma:"9A", responsavel:"Carla Oliveira",  freq:71, media:4.2, ocorr:3, score:89, nivel:"alto",  tend:[7.0,6.2,5.5,4.8,4.2], disciplinas:{mat:3.9,por:4.5,cie:4.8,his:4.1,geo:3.7} },
+  { id:2, nome:"Lucas Ferreira",   turma:"9A", responsavel:"Maria Ferreira",  freq:78, media:5.8, ocorr:1, score:61, nivel:"medio", tend:[7.5,7.0,6.5,6.0,5.8], disciplinas:{mat:5.5,por:6.2,cie:6.0,his:5.8,geo:5.5} },
+  { id:3, nome:"Ana Paula Silva",  turma:"8B", responsavel:"João Silva",      freq:82, media:6.9, ocorr:0, score:38, nivel:"medio", tend:[6.5,6.8,7.0,6.9,6.9], disciplinas:{mat:6.5,por:6.9,cie:7.2,his:7.0,geo:6.8} },
+  { id:4, nome:"Carlos Mendonça",  turma:"9A", responsavel:"Paulo Mendonça",  freq:82, media:5.1, ocorr:1, score:55, nivel:"medio", tend:[6.0,5.8,5.5,5.2,5.1], disciplinas:{mat:4.8,por:5.5,cie:5.4,his:5.0,geo:4.8} },
+  { id:5, nome:"Beatriz Santos",   turma:"7C", responsavel:"Roberto Santos",  freq:95, media:8.8, ocorr:0, score:8,  nivel:"baixo", tend:[8.2,8.5,8.7,8.8,8.8], disciplinas:{mat:9.1,por:8.8,cie:8.5,his:9.0,geo:8.6} },
+  { id:6, nome:"Mariana Costa",    turma:"8B", responsavel:"Fernanda Costa",  freq:88, media:8.2, ocorr:0, score:12, nivel:"baixo", tend:[7.8,7.9,8.0,8.1,8.2], disciplinas:{mat:8.0,por:8.5,cie:8.2,his:8.3,geo:8.0} },
+]
+
+const CONVERSAS = [
+  { id:1, avatar:"CO", participante:"Carla Oliveira", papel:"Mãe",  aluno:"Rafael Oliveira",  turma:"9A", hora:"09:41", naoLidas:0, ultima:"Obrigada pela atenção!",
+    msgs:[
+      {de:"outro",txt:"Bom dia, queria conversar sobre as notas do Rafael.",hora:"09:20",lida:true},
+      {de:"eu",txt:"Bom dia! O Rafael tem dificuldades em álgebra. Vou preparar uma lista de exercícios.",hora:"09:25",lida:true},
+      {de:"outro",txt:"Ele tem estudado em casa mas ainda tem dificuldades.",hora:"09:28",lida:true},
+      {de:"eu",txt:"Sugiro também as aulas de reforço às terças-feiras, 18h, sala 12.",hora:"09:33",lida:true},
+      {de:"outro",txt:"Obrigada pela atenção!",hora:"09:41",lida:true},
+    ]},
+  { id:2, avatar:"JS", participante:"João Silva",    papel:"Pai",  aluno:"Ana Paula Silva",  turma:"8B", hora:"Ontem", naoLidas:2, ultima:"Podemos marcar uma reunião?",
+    msgs:[
+      {de:"outro",txt:"Professor, a Ana tem chegado em casa com dificuldades na matéria.",hora:"14:10",lida:true},
+      {de:"eu",txt:"Percebi isso. O conteúdo de análise sintática tem sido desafiador.",hora:"14:45",lida:true},
+      {de:"outro",txt:"O que podemos fazer para ajudá-la?",hora:"14:50",lida:true},
+      {de:"outro",txt:"Podemos marcar uma reunião?",hora:"14:51",lida:false},
+    ]},
+  { id:3, avatar:"MF", participante:"Maria Ferreira",papel:"Mãe",  aluno:"Lucas Ferreira",  turma:"9A", hora:"Seg",   naoLidas:0, ultima:"Entendido, obrigada!",
+    msgs:[
+      {de:"eu",txt:"Boa tarde, Maria. O Lucas faltou 3 aulas seguidas esta semana.",hora:"15:00",lida:true},
+      {de:"outro",txt:"Nossa! Ele disse que foi para a escola.",hora:"15:10",lida:true},
+      {de:"eu",txt:"Infelizmente não. A frequência está em 78%, próxima do limite.",hora:"15:12",lida:true},
+      {de:"outro",txt:"Entendido, obrigada!",hora:"15:20",lida:true},
+    ]},
+]
+
+const SOLICITACOES = [
+  { id:1, tipo:"Declaração de Matrícula", protocolo:"SCL-2026-001", data:"28/03/2026", prazo:"31/03/2026", status:"concluido", urgencia:"baixa", ia:"Solicitação padrão. SLA normal aplicado." },
+  { id:2, tipo:"Atestado de Frequência",  protocolo:"SCL-2026-002", data:"29/03/2026", prazo:"30/03/2026", status:"em_andamento", urgencia:"alta", ia:"Aluno com frequência crítica (71%). Triagem IA priorizou como urgente." },
+  { id:3, tipo:"Histórico Escolar",        protocolo:"SCL-2026-003", data:"27/03/2026", prazo:"01/04/2026", status:"recebido", urgencia:"media", ia:"Perfil de risco médio. SLA padrão de 3 dias aplicado." },
+]
+
+const TIPOS_SOL = [
+  { id:"dec", titulo:"Declaração de Matrícula", desc:"Confirma matrícula regular na instituição.", prazo:"1 dia útil", icon:"📄", cor:"blue" },
+  { id:"his", titulo:"Histórico Escolar",        desc:"Desempenho acadêmico completo do aluno.",   prazo:"3 dias úteis", icon:"📜", cor:"purple" },
+  { id:"ate", titulo:"Atestado de Frequência",  desc:"Comprova frequência em período letivo.",     prazo:"1 dia útil", icon:"🛡️", cor:"green" },
+  { id:"tra", titulo:"Transferência Escolar",   desc:"Documentos para transferência institucional.", prazo:"5 dias úteis", icon:"🎓", cor:"amber" },
+]
+
+const REUNIOES = [
+  { id:1, avatar:"CO", responsavel:"Carla Oliveira", papel:"Mãe",  aluno:"Rafael Oliveira", turma:"9A", data:"02/04/2026", hora:"14:00", local:"Microsoft Teams", teams:true, status:"pendente",   pautaIA:true,  antec:48, pauta:["Frequência crítica — 71%","Queda em Matemática (média 4.2)","3 ocorrências no bimestre","Plano de recuperação"] },
+  { id:2, avatar:"JS", responsavel:"João Silva",    papel:"Pai",  aluno:"Ana Paula Silva",  turma:"8B", data:"03/04/2026", hora:"15:30", local:"Sala Coordenação", teams:false, status:"confirmado",  pautaIA:true,  antec:72, pauta:["Dificuldades em Português","Solicitação de reunião pelo responsável","Estratégias de apoio em casa"] },
+  { id:3, avatar:"MF", responsavel:"Maria Ferreira",papel:"Mãe",  aluno:"Lucas Ferreira",  turma:"9A", data:"01/04/2026", hora:"10:00", local:"Microsoft Teams", teams:true, status:"recusado",   pautaIA:false, antec:24, pauta:["Acompanhamento geral","Participação no reforço"], obs:"Responsável não pode no horário. Aguarda novo horário." },
+  { id:4, avatar:"RS", responsavel:"Roberto Santos",papel:"Pai",  aluno:"Beatriz Santos",  turma:"7C", data:"04/04/2026", hora:"09:00", local:"Sala Coordenação", teams:false, status:"confirmado",  pautaIA:false, antec:96, pauta:["Reconhecimento por desempenho excepcional","Olimpíadas escolares"] },
+]
+
+const IA_PRIORIDADES = [
+  { id:1, prioridade:"critica", aluno:"Rafael Oliveira", turma:"9A", responsavel:"Carla Oliveira", motivo:"Risco iminente de reprovação por frequência", detalhes:["Frequência: 71% — abaixo do mínimo de 75%","Média geral: 4.2 — zona de reprovação","3 ocorrências disciplinares no bimestre"], datas:["07/04","08/04","09/04"], hora:"14:00", agendado:false },
+  { id:2, prioridade:"alta",    aluno:"Ana Paula Silva",  turma:"8B", responsavel:"João Silva",    motivo:"Queda progressiva em Português", detalhes:["Nota B1: 7.2 → B2: 6.9 — tendência de queda","Responsável solicitou reunião via mensagem"], datas:["08/04","10/04"], hora:"15:30", agendado:true },
+  { id:3, prioridade:"media",   aluno:"Carlos Mendonça",  turma:"9A", responsavel:"Paulo Mendonça",motivo:"Média abaixo de 6.0 em duas disciplinas", detalhes:["Matemática: 5.1","Ciências: 5.4","Frequência adequada — 82%"], datas:["10/04","14/04"], hora:"10:00", agendado:false },
+]
+
+const DISCIPLINAS = [
+  { key:"mat", nome:"Matemática", icon:"∑",  cor:"blue",   ia:"Análise de erros de cálculo",    badge:"OCR + LLM",  desc:"IA identifica padrões de erro — frações, álgebra, geometria — e sugere exercícios focados.",           notas:[{b:"B1",v:6.5},{b:"B2",v:5.8},{b:"B3",v:5.2},{b:"B4",v:null}], mediaTurma:6.2 },
+  { key:"por", nome:"Português",  icon:"Aa", cor:"purple", ia:"Avaliação de redação",           badge:"NLP + LLM", desc:"IA analisa coesão, ortografia e argumentação, gerando feedback por competência de escrita.",          notas:[{b:"B1",v:7.2},{b:"B2",v:6.9},{b:"B3",v:6.2},{b:"B4",v:null}], mediaTurma:6.8 },
+  { key:"cie", nome:"Ciências",   icon:"⚗", cor:"green",  ia:"Lacunas conceituais",           badge:"LLM",       desc:"IA detecta conceitos que o aluno não domina — células, fotossíntese, ecossistemas.",                  notas:[{b:"B1",v:7.5},{b:"B2",v:7.0},{b:"B3",v:6.8},{b:"B4",v:null}], mediaTurma:6.5 },
+  { key:"his", nome:"História",   icon:"🏛", cor:"amber",  ia:"Interpretação histórica",       badge:"LLM",       desc:"IA avalia contextualização de eventos e capacidade de construir narrativa histórica.",                notas:[{b:"B1",v:6.0},{b:"B2",v:5.8},{b:"B3",v:5.5},{b:"B4",v:null}], mediaTurma:6.1 },
+  { key:"geo", nome:"Geografia",  icon:"🌎", cor:"teal",   ia:"Análise espacial e temática",   badge:"LLM",       desc:"IA identifica dificuldades em cartografia, geopolítica e temas ambientais.",                          notas:[{b:"B1",v:5.5},{b:"B2",v:5.0},{b:"B3",v:4.8},{b:"B4",v:null}], mediaTurma:6.3 },
+]
+
+// ════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════
+let currentRole = 'coordenador'
+let currentPage = 'dashboard'
+let currentChat = 0
+let currentDiscIdx = 0
+let selectedAluno = null
+let selectedBoletimAluno = null
+let solFiltro = 'todos'
+let agendaFiltro = 'todos'
+let alunosBusca = ''
+let alunosTurma = ''
+let alunosRisco = ''
+let reunioesData = [...REUNIOES]
+let solicitacoesData = [...SOLICITACOES]
+let iaPrioridadesData = [...IA_PRIORIDADES]
+
+// ════════════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════════════
+const NAV_CONFIG = {
+  coordenador: [
+    { key:'dashboard',    icon:'⊞',  label:'Dashboard',       ai:false },
+    { key:'alunos',       icon:'👥', label:'Alunos',          ai:false },
+    { key:'boletim',      icon:'📊', label:'Boletim',         ai:true  },
+    { key:'agendamentos', icon:'📅', label:'Agendamentos',    ai:true  },
+    { key:'mensagens',    icon:'💬', label:'Mensagens',       ai:false },
+  ],
+  professor: [
+    { key:'dashboard',    icon:'⊞',  label:'Dashboard',       ai:false },
+    { key:'boletim',      icon:'📊', label:'Boletim',         ai:true  },
+    { key:'mensagens',    icon:'💬', label:'Mensagens',       ai:false },
+  ],
+  responsavel: [
+    { key:'dashboard',    icon:'⊞',  label:'Dashboard',       ai:false },
+    { key:'boletim',      icon:'📊', label:'Meu Boletim',     ai:false },
+    { key:'mensagens',    icon:'💬', label:'Mensagens',       ai:false },
+    { key:'solicitacoes', icon:'📋', label:'Solicitações',    ai:true  },
+    { key:'agendamentos', icon:'📅', label:'Reuniões',        ai:false },
+  ],
+  secretaria: [
+    { key:'dashboard',    icon:'⊞',  label:'Dashboard',       ai:false },
+    { key:'solicitacoes', icon:'📋', label:'Solicitações',    ai:true  },
+    { key:'agendamentos', icon:'📅', label:'Agendamentos',    ai:false },
+  ],
+}
+
+const ROLE_USERS = {
+  coordenador: { nome:'Ana Coordenadora', label:'Coordenadora Pedagógica', avatar:'AC' },
+  professor:   { nome:'Carlos Professor', label:'Professor de Matemática',  avatar:'CP' },
+  responsavel: { nome:'Maria Ferreira',   label:'Responsável — Lucas F.',   avatar:'MF' },
+  secretaria:  { nome:'Paula Secretaria', label:'Secretaria Escolar',       avatar:'PS' },
+}
+
+function buildNav() {
+  const items = NAV_CONFIG[currentRole] || []
+  const u = ROLE_USERS[currentRole]
+  document.getElementById('userAvatar').textContent = u.avatar
+  document.getElementById('userName').textContent = u.nome
+  document.getElementById('userRoleLabel').textContent = u.label
+
+  let html = '<div class="nav-section">'
+  items.forEach(item => {
+    const active = item.key === currentPage ? 'active' : ''
+    const badge = item.ai ? `<span class="nav-ai-badge">IA</span>` : ''
+    const notif = item.key === 'mensagens' && getUnreadCount() > 0
+      ? `<span class="nav-badge">${getUnreadCount()}</span>` : ''
+    html += `<div class="nav-item ${active}" onclick="navigateTo('${item.key}')">
+      <span class="icon">${item.icon}</span>
+      <span>${item.label}</span>
+      ${badge}${notif}
+    </div>`
+  })
+  html += '</div>'
+  document.getElementById('navMenu').innerHTML = html
+}
+
+function navigateTo(page) {
+  currentPage = page
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+  const el = document.getElementById('page-' + page)
+  if (el) { el.classList.add('active'); el.classList.add('animate-in'); }
+  document.getElementById('topbarTitle').textContent = getPageTitle(page)
+  buildNav()
+  renderPage(page)
+}
+
+function getPageTitle(page) {
+  const titles = { dashboard:'Dashboard', boletim:'Boletim Digital', mensagens:'Mensagens', solicitacoes:'Solicitações', agendamentos:'Agendamentos', alunos:'Alunos' }
+  return titles[page] || page
+}
+
+function changeRole(role) {
+  currentRole = role
+  const firstPage = NAV_CONFIG[role][0].key
+  navigateTo(firstPage)
+}
+
+function getUnreadCount() {
+  return CONVERSAS.reduce((acc, c) => acc + c.naoLidas, 0)
+}
+
+// ════════════════════════════════════════════════════════
+//  RENDER ROUTER
+// ════════════════════════════════════════════════════════
+function renderPage(page) {
+  if (page === 'dashboard')    renderDashboard()
+  if (page === 'boletim')      renderBoletim()
+  if (page === 'mensagens')    renderMensagens()
+  if (page === 'solicitacoes') renderSolicitacoes()
+  if (page === 'agendamentos') renderAgendamentos()
+  if (page === 'alunos')       renderAlunos()
+}
+
+// ════════════════════════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════════════════════════
+function renderDashboard() {
+  const u = ROLE_USERS[currentRole]
+  document.getElementById('dashGreeting').textContent = u.nome.split(' ')[0]
+  document.getElementById('dashDate').textContent = new Date().toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long' })
+
+  // Risk table
+  const at_risk = ALUNOS.filter(a => a.nivel !== 'baixo').sort((a,b) => b.score - a.score)
+  let thtml = `<table><thead><tr><th>Aluno</th><th>Turma</th><th>Frequência</th><th>Média</th><th>Score IA</th><th>Risco</th></tr></thead><tbody>`
+  at_risk.forEach(a => {
+    const rb = riscoBadge(a.nivel)
+    thtml += `<tr><td><div class="flex items-center gap-8"><div style="width:30px;height:30px;border-radius:50%;background:${nivelColor(a.nivel,'light')};color:${nivelColor(a.nivel,'text')};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${initials(a.nome)}</div><div><div style="font-weight:600;font-size:13px">${a.nome}</div><div style="font-size:11px;color:var(--muted)">${a.responsavel}</div></div></div></td><td><span class="tag">${a.turma}</span></td><td style="color:${a.freq<75?'var(--red)':'var(--text)'};font-weight:600">${a.freq}%</td><td style="color:${mediaColor(a.media)};font-weight:600">${a.media.toFixed(1)}</td><td><div class="flex items-center gap-8"><div class="bar-wrap" style="width:60px"><div class="bar-fill" style="width:${a.score}%;background:${nivelColor(a.nivel,'bar')}"></div></div><span style="font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:${nivelColor(a.nivel,'text')}">${a.score}</span></div></td><td>${rb}</td></tr>`
+  })
+  thtml += `</tbody></table>`
+  document.getElementById('riskTable').innerHTML = thtml
+
+  // Activity
+  const acts = [
+    { icon:'📝', txt:'Lucas Ferreira — nota B3 lançada em Matemática', time:'há 5 min' },
+    { icon:'💬', txt:'João Silva enviou mensagem sobre Ana Paula', time:'há 12 min' },
+    { icon:'📋', txt:'Nova solicitação: Atestado de Frequência', time:'há 28 min' },
+    { icon:'✅', txt:'Reunião com Carla Oliveira confirmada', time:'há 1h' },
+    { icon:'⚠️', txt:'Rafael Oliveira: frequência abaixo de 75%', time:'há 2h' },
+  ]
+  document.getElementById('activityFeed').innerHTML = acts.map(a =>
+    `<div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px">
+      <span style="font-size:16px;flex-shrink:0">${a.icon}</span>
+      <div><div style="font-size:12px">${a.txt}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">${a.time}</div></div>
+    </div>`
+  ).join('')
+
+  // Meetings
+  const meet = REUNIOES.filter(r => r.status !== 'recusado').slice(0, 3)
+  document.getElementById('upcomingMeetings').innerHTML = meet.map(r =>
+    `<div style="padding:12px 16px;border-bottom:1px solid var(--border)">
+      <div class="flex items-center justify-between mb-4">
+        <span style="font-weight:600;font-size:13px">${r.aluno}</span>
+        ${statusBadge(r.status)}
+      </div>
+      <div style="font-size:11px;color:var(--muted)">📅 ${r.data} às ${r.hora} · ${r.teams ? '📹 Teams' : '📍 ' + r.local}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">👤 ${r.responsavel}</div>
+    </div>`
+  ).join('')
+}
+
+// ════════════════════════════════════════════════════════
+//  BOLETIM
+// ════════════════════════════════════════════════════════
+function renderBoletim() {
+  renderDiscipTabs()
+  renderDiscipAI()
+  renderBoletimTable()
+}
+
+function renderDiscipTabs() {
+  const d = DISCIPLINAS[currentDiscIdx]
+  document.getElementById('disciplinaTabs').innerHTML = DISCIPLINAS.map((disc, i) => {
+    const active = i === currentDiscIdx
+    const corStyle = active ? `background:${corBg(disc.cor)};border-color:${corBorder(disc.cor)};color:${corText(disc.cor)}` : 'background:var(--surface);border:1px solid var(--border);color:var(--muted)'
+    return `<button onclick="selectDisc(${i})" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid;transition:all 0.15s;${corStyle}">
+      <span>${disc.icon}</span>${disc.nome}
+    </button>`
+  }).join('')
+}
+
+function renderDiscipAI() {
+  const d = DISCIPLINAS[currentDiscIdx]
+  document.getElementById('disciplinaAICard').innerHTML = `
+    <div class="ai-block-header">
+      <span>✦</span>
+      <span class="ai-block-title">IA para ${d.nome}: ${d.ia}</span>
+      <span class="badge badge-ai">${d.badge}</span>
+    </div>
+    <div class="ai-block-body">${d.desc}</div>`
+}
+
+function renderBoletimTable() {
+  const d = DISCIPLINAS[currentDiscIdx]
+  document.getElementById('boletimTableTitle').textContent = `Turma 9A · ${d.nome}`
+
+  let html = `<table><thead><tr><th>Aluno</th><th style="text-align:center">B1</th><th style="text-align:center">B2</th><th style="text-align:center">B3</th><th style="text-align:center">B4</th><th style="text-align:center">Média</th><th style="text-align:center">Status</th><th style="text-align:center"><span style="display:flex;align-items:center;gap:4px;justify-content:center">✦ Análise IA</span></th></tr></thead><tbody>`
+
+  ALUNOS.forEach(a => {
+    const notas = d.notas.map(n => n.v)
+    const vals = notas.filter(v => v !== null)
+    const media = vals.length ? (vals.reduce((s,v)=>s+v,0)/vals.length).toFixed(1) : '—'
+    const st = parseFloat(media) >= 7 ? {l:'Aprovado',c:'green'} : parseFloat(media) >= 5 ? {l:'Recuperação',c:'amber'} : {l:'Reprovado',c:'red'}
+    const score = a.score
+    const nível = a.nivel
+
+    const notasCells = ['b1','b2','b3','b4'].map((b,i) => {
+      const v = d.notas[i]?.v
+      return `<td style="text-align:center"><span style="font-weight:600;color:${v!==null&&v<5?'var(--red)':'var(--text)'}">${v!==null?v.toFixed(1):'—'}</span></td>`
+    }).join('')
+
+    html += `<tr class="aluno-row${selectedBoletimAluno===a.id?' selected':''}" onclick="selectBoletimAluno(${a.id})">
+      <td><div class="flex items-center gap-8"><div style="width:30px;height:30px;border-radius:50%;background:#eff6ff;color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${initials(a.nome)}</div><div style="font-weight:600;font-size:13px">${a.nome}</div></div></td>
+      ${notasCells}
+      <td style="text-align:center;font-weight:700">${media}</td>
+      <td style="text-align:center"><span class="badge badge-${st.c}">${st.l}</span></td>
+      <td style="text-align:center">
+        <div class="flex items-center gap-6" style="justify-content:center">
+          ${riscoBadge(nível)}
+          <span style="font-size:11px;font-family:'DM Mono',monospace;font-weight:700;color:${nivelColor(nível,'text')}">${score}</span>
+          ${sparkline(a.tend.slice(-3), nivelColor(nível,'bar'))}
+        </div>
+      </td>
+    </tr>`
+  })
+  html += '</tbody></table>'
+  document.getElementById('boletimTable').innerHTML = html
+  renderBoletimPanel()
+}
+
+function selectDisc(idx) {
+  currentDiscIdx = idx
+  renderBoletim()
+}
+
+function selectBoletimAluno(id) {
+  selectedBoletimAluno = selectedBoletimAluno === id ? null : id
+  renderBoletimTable()
+  renderBoletimPanel()
+}
+
+function renderBoletimPanel() {
+  const panel = document.getElementById('boletimPanel')
+  if (!selectedBoletimAluno) { panel.classList.remove('open'); return; }
+  panel.classList.add('open')
+  const a = ALUNOS.find(x => x.id === selectedBoletimAluno)
+  if (!a) return
+  const d = DISCIPLINAS[currentDiscIdx]
+
+  const insightMap = {
+    alto:  'Queda contínua detectada. Frequência e média abaixo do limiar crítico. Intervenção imediata recomendada antes do fechamento do bimestre.',
+    medio: 'Tendência de queda moderada. Monitoramento semanal recomendado. Contato com a família pode reverter o quadro.',
+    baixo: 'Desempenho estável e acima da média. Nenhuma ação necessária no momento.',
+  }
+
+  const plano = {
+    mat: ["Revisar equações do 2º grau","Praticar frações — lista de reforço","Reforço às terças 18h sala 12"],
+    por: ["Ler capítulo sobre análise sintática","Redação semanal com feedback","Revisar concordância verbal"],
+    cie: ["Estudar ciclo celular","Revisar fotossíntese","Resumo de ecossistemas"],
+    his: ["Mapa mental da Revolução Industrial","Texto sobre Era Vargas","Praticar interpretação de fontes"],
+    geo: ["Cartografia — escalas e projeções","Geopolítica atual capítulo 8","Análise de mapas temáticos"],
+  }
+
+  document.getElementById('boletimPanelContent').innerHTML = `
+    <div style="background:${corBg(d.cor)};border-bottom:1px solid ${corBorder(d.cor)};padding:14px 16px">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-8">
+          <span style="font-weight:700;color:${corText(d.cor)};font-size:13px">Análise IA · ${d.nome}</span>
+          <span class="badge badge-ai">${d.badge}</span>
+        </div>
+        <button onclick="selectBoletimAluno(null)" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px">✕</button>
+      </div>
+      <div style="font-weight:700;font-size:15px">${a.nome}</div>
+      <div style="font-size:11px;color:var(--muted)">Turma ${a.turma}</div>
+    </div>
+    <div style="padding:16px">
+      <div class="score-wrap mb-16">
+        ${scoreRingSVG(a.score, a.nivel)}
+        <div>
+          <div style="margin-bottom:6px">${riscoBadge(a.nivel)}</div>
+          <div class="text-sm text-muted">Freq: <strong style="color:${a.freq<75?'var(--red)':'var(--text)'}">${a.freq}%</strong></div>
+          <div class="text-sm text-muted">Média: <strong style="color:${mediaColor(a.media)}">${a.media.toFixed(1)}</strong></div>
+          <div class="text-sm text-muted">Ocorr: <strong>${a.ocorr}</strong></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div class="text-xs text-muted font-600 mb-8">📈 Tendência histórica</div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px">
+          ${sparklineLarge(a.tend, nivelColor(a.nivel,'bar'))}
+          <div class="flex justify-between mt-4"><span class="text-xs text-muted">5 bimestres</span><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700">${a.tend[a.tend.length-1].toFixed(1)}</span></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div class="text-xs text-muted font-600 mb-8">📚 Médias por disciplina</div>
+        ${Object.entries({mat:'Matemática',por:'Português',cie:'Ciências',his:'História',geo:'Geografia'}).map(([k,nome])=>{
+          const v = a.disciplinas[k]
+          return `<div class="flex items-center gap-8 mb-6"><span style="font-size:11px;color:var(--muted);width:70px">${nome}</span><div class="bar-wrap"><div class="bar-fill" style="width:${v*10}%;background:${mediaColor(v)}"></div></div><span style="font-size:12px;font-weight:700;color:${mediaColor(v)};width:28px;text-align:right">${v.toFixed(1)}</span></div>`
+        }).join('')}
+      </div>
+
+      <div style="background:var(--amber-light);border:1px solid var(--amber-border);border-radius:8px;padding:12px;margin-bottom:12px">
+        <div class="flex items-center gap-6 mb-6"><span>🧠</span><span style="font-size:12px;font-weight:600;color:#92400e">Insight da IA</span><span class="badge badge-ai" style="font-size:9px">ML</span></div>
+        <p style="font-size:11px;color:#78350f;line-height:1.6">${insightMap[a.nivel]}</p>
+      </div>
+
+      <div style="background:var(--purple-light);border:1px solid var(--purple-border);border-radius:8px;padding:12px;margin-bottom:12px">
+        <div class="flex items-center gap-6 mb-8"><span>💡</span><span style="font-size:12px;font-weight:600;color:var(--purple)">Plano de estudos</span></div>
+        ${(plano[d.key]||[]).map(p=>`<div style="display:flex;gap:6px;font-size:11px;color:#4c1d95;margin-bottom:4px"><span>•</span>${p}</div>`).join('')}
+      </div>
+
+      <div class="flex flex-col gap-8">
+        <button class="btn btn-primary" style="font-size:12px;justify-content:center" onclick="navigateTo('mensagens')">💬 Mensagem ao responsável</button>
+        <button class="btn btn-secondary" style="font-size:12px;justify-content:center" onclick="navigateTo('agendamentos')">📅 Agendar reunião</button>
+      </div>
+    </div>`
+}
+
+// ════════════════════════════════════════════════════════
+//  MENSAGENS
+// ════════════════════════════════════════════════════════
+function renderMensagens() {
+  renderChatList()
+  if (currentChat === 0) currentChat = CONVERSAS[0].id
+  renderChatMessages(currentChat)
+}
+
+function renderChatList(filter = '') {
+  const filtered = CONVERSAS.filter(c =>
+    c.participante.toLowerCase().includes(filter.toLowerCase()) ||
+    c.aluno.toLowerCase().includes(filter.toLowerCase())
+  )
+  document.getElementById('chatList').innerHTML = filtered.map(c => {
+    const active = c.id === currentChat ? 'active' : ''
+    const unread = c.naoLidas > 0 ? `<span class="chat-unread">${c.naoLidas}</span>` : ''
+    return `<div class="chat-item ${active}" onclick="openChat(${c.id})">
+      ${unread}
+      <div class="chat-item-name">${c.participante}</div>
+      <div class="chat-item-sub">${c.papel} de ${c.aluno} · ${c.turma}</div>
+      <div class="chat-item-preview">${c.ultima}</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:2px">${c.hora}</div>
+    </div>`
+  }).join('')
+}
+
+function openChat(id) {
+  currentChat = id
+  const conv = CONVERSAS.find(c => c.id === id)
+  if (conv) conv.naoLidas = 0
+  renderChatList()
+  renderChatMessages(id)
+  buildNav()
+}
+
+function renderChatMessages(id) {
+  const conv = CONVERSAS.find(c => c.id === id)
+  if (!conv) return
+
+  document.getElementById('chatHeader').innerHTML = `
+    <div class="flex items-center gap-12">
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">${conv.avatar}</div>
+      <div>
+        <div style="font-weight:600;font-size:14px">${conv.participante}</div>
+        <div style="font-size:11px;color:var(--muted)">${conv.papel} de ${conv.aluno} · Turma ${conv.turma}</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);background:var(--bg);padding:4px 10px;border-radius:6px;border:1px solid var(--border)">🔒 Canal privado · LGPD</div>`
+
+  document.getElementById('chatMessages').innerHTML = conv.msgs.map(m => {
+    const side = m.de === 'eu' ? 'sent' : 'recv'
+    const avatar = side === 'recv' ? `<div class="msg-avatar">${conv.avatar}</div>` : ''
+    const check = side === 'sent' ? (m.lida ? '<span style="color:rgba(255,255,255,0.6);font-size:10px">✓✓</span>' : '<span style="color:rgba(255,255,255,0.4);font-size:10px">✓</span>') : ''
+    return `<div class="msg ${side}">
+      ${avatar}
+      <div>
+        <div class="msg-bubble">${m.txt}</div>
+        <div class="msg-time">${m.hora} ${check}</div>
+      </div>
+    </div>`
+  }).join('')
+
+  const el = document.getElementById('chatMessages')
+  el.scrollTop = el.scrollHeight
+}
+
+function sendMessage() {
+  const input = document.getElementById('chatInput')
+  const txt = input.value.trim()
+  if (!txt) return
+  const conv = CONVERSAS.find(c => c.id === currentChat)
+  if (!conv) return
+  const hora = new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })
+  conv.msgs.push({ de:'eu', txt, hora, lida:false })
+  conv.ultima = txt
+  conv.hora = 'Agora'
+  input.value = ''
+  input.style.height = 'auto'
+  renderChatMessages(currentChat)
+  renderChatList()
+}
+
+function filterChats(v) { renderChatList(v) }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 100) + 'px' }
+
+// ════════════════════════════════════════════════════════
+//  SOLICITAÇÕES
+// ════════════════════════════════════════════════════════
+function renderSolicitacoes() {
+  const isSecretaria = currentRole === 'secretaria'
+  document.getElementById('solicitacoesTitle').textContent = isSecretaria ? 'Gestão de Solicitações' : 'Minhas Solicitações'
+  document.getElementById('solicitacoesDesc').textContent = isSecretaria
+    ? 'Processe e atualize o status das solicitações recebidas'
+    : 'Solicite documentos e acompanhe o status em tempo real'
+
+  // Cards (responsável/aluno)
+  const cardsEl = document.getElementById('solicitacoesCards')
+  cardsEl.style.display = isSecretaria ? 'none' : 'block'
+  if (!isSecretaria) {
+    document.getElementById('tiposGrid').innerHTML = TIPOS_SOL.map(t =>
+      `<div class="card cursor-pointer" style="padding:18px;transition:all 0.15s" onmouseenter="this.style.boxShadow='0 4px 20px rgba(0,0,0,0.1)'" onmouseleave="this.style.boxShadow=''" onclick="abrirModalSol('${t.id}')">
+        <div style="background:${corBg(t.cor)};border-radius:8px;padding:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px">${t.icon}</div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px">${t.titulo}</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:10px">${t.desc}</div>
+        <div style="font-size:11px;color:var(--muted)">⏱ Prazo: <strong style="color:var(--text)">${t.prazo}</strong></div>
+      </div>`
+    ).join('')
+  }
+
+  // Filtros
+  document.getElementById('solicitacoesTableLabel').textContent = isSecretaria ? 'Todas as solicitações' : 'Histórico'
+  const filtros = ['todos','recebido','em_andamento','concluido']
+  document.getElementById('solicitacoesFilters').innerHTML = filtros.map(f =>
+    `<button onclick="setSolFiltro('${f}')" style="padding:5px 12px;border-radius:8px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid;transition:all 0.15s;background:${solFiltro===f?'var(--text)':'var(--surface)'};color:${solFiltro===f?'#fff':'var(--muted)'};border-color:${solFiltro===f?'var(--text)':'var(--border)'}">
+      ${f==='todos'?'Todos':f==='recebido'?'Recebido':f==='em_andamento'?'Em andamento':'Concluído'}
+    </button>`
+  ).join('')
+
+  // Tabela
+  const filtradas = solicitacoesData.filter(s => solFiltro === 'todos' || s.status === solFiltro)
+  let html = `<table><thead><tr><th>Tipo</th><th>Protocolo</th><th>Data</th><th>Prazo</th><th>Status</th><th>✦ Triagem IA</th><th style="text-align:center">Doc.</th>${isSecretaria?'<th>Ação</th>':''}</tr></thead><tbody>`
+  filtradas.forEach(s => {
+    const st = statusSolConfig(s.status)
+    const urg = urgenciaConfig(s.urgencia)
+    html += `<tr>
+      <td style="font-weight:600">${s.tipo}</td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${s.protocolo}</span></td>
+      <td style="color:var(--muted)">${s.data}</td>
+      <td style="color:var(--muted)">${s.prazo}</td>
+      <td><span class="badge badge-${st.c}">${st.l}</span></td>
+      <td>
+        <div><span class="badge badge-${urg.c}" style="margin-bottom:4px">${urg.l}</span></div>
+        <div style="font-size:10px;color:var(--muted);max-width:160px;line-height:1.4">${s.ia.length>60?s.ia.slice(0,60)+'...':s.ia}</div>
+      </td>
+      <td style="text-align:center">
+        ${s.status==='concluido'
+          ? `<button class="btn btn-green btn-sm" onclick="showToast('📥 Download iniciado: ${s.tipo}')">⬇ Baixar</button>`
+          : '<span style="color:var(--muted);font-size:12px">—</span>'}
+      </td>
+      ${isSecretaria ? `<td>${statusNextBtn(s)}</td>` : ''}
+    </tr>`
+  })
+  html += '</tbody></table>'
+  document.getElementById('solicitacoesTable').innerHTML = html
+}
+
+function statusNextBtn(s) {
+  if (s.status === 'recebido')     return `<button class="btn btn-sm" style="background:var(--amber-light);color:var(--amber);border:1px solid var(--amber-border)" onclick="advanceSol(${s.id})">→ Em andamento</button>`
+  if (s.status === 'em_andamento') return `<button class="btn btn-green btn-sm" onclick="advanceSol(${s.id})">✓ Concluir</button>`
+  return '<span class="text-xs text-muted">—</span>'
+}
+
+function advanceSol(id) {
+  const s = solicitacoesData.find(x => x.id === id)
+  if (!s) return
+  if (s.status === 'recebido') s.status = 'em_andamento'
+  else if (s.status === 'em_andamento') s.status = 'concluido'
+  showToast(`✅ Status atualizado: ${s.tipo}`)
+  renderSolicitacoes()
+}
+
+function setSolFiltro(f) { solFiltro = f; renderSolicitacoes() }
+
+function abrirModalSol(id) {
+  const t = TIPOS_SOL.find(x => x.id === id)
+  if (!t) return
+  document.getElementById('modalSolTitulo').textContent = t.titulo
+  document.getElementById('modalSolTipo').textContent = t.titulo
+  document.getElementById('modalSolPrazo').textContent = t.prazo
+  document.getElementById('modalSolConfirmar').onclick = () => confirmarSol(t)
+  openModal('modalSolicitacao')
+}
+
+function confirmarSol(t) {
+  solicitacoesData.unshift({
+    id: Date.now(),
+    tipo: t.titulo,
+    protocolo: `SCL-2026-00${solicitacoesData.length + 1}`,
+    data: new Date().toLocaleDateString('pt-BR'),
+    prazo: '—',
+    status: 'recebido',
+    urgencia: 'media',
+    ia: 'Triagem em processamento...',
+  })
+  closeModal('modalSolicitacao')
+  renderSolicitacoes()
+  showToast(`✅ Solicitação de ${t.titulo} enviada com sucesso!`)
+}
+
+// ════════════════════════════════════════════════════════
+//  AGENDAMENTOS
+// ════════════════════════════════════════════════════════
+function renderAgendamentos() {
+  // Stats
+  const total = reunioesData.length
+  const pend  = reunioesData.filter(r=>r.status==='pendente').length
+  const conf  = reunioesData.filter(r=>r.status==='confirmado').length
+  const rec   = reunioesData.filter(r=>r.status==='recusado').length
+  document.getElementById('agendaStats').innerHTML = [
+    {l:'Total', v:total, c:'var(--accent)'},{l:'Pendentes', v:pend, c:'var(--amber)'},{l:'Confirmadas', v:conf, c:'var(--green)'},{l:'Recusadas', v:rec, c:'var(--red)'}
+  ].map(s => `<div class="stat-card"><div class="stat-label">${s.l}</div><div class="stat-value" style="color:${s.c}">${s.v}</div></div>`).join('')
+
+  // Filtros
+  const filtros = ['todos','pendente','confirmado','recusado','remarcado']
+  document.getElementById('agendaFilters').innerHTML = filtros.map(f =>
+    `<button onclick="setAgendaFiltro('${f}')" style="padding:5px 12px;border-radius:8px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid;transition:all 0.15s;background:${agendaFiltro===f?'var(--text)':'var(--surface)'};color:${agendaFiltro===f?'#fff':'var(--muted)'};border-color:${agendaFiltro===f?'var(--text)':'var(--border)'}">
+      ${f==='todos'?'Todos':f==='pendente'?`Pendentes ${pend>0?`<span style="background:#f59e0b;color:#fff;border-radius:100px;padding:0 5px;font-size:10px;margin-left:2px">${pend}</span>`:''}`:f==='confirmado'?'Confirmadas':f==='recusado'?'Recusadas':'Remarcadas'}
+    </button>`
+  ).join('')
+
+  // List
+  const filtradas = reunioesData.filter(r => agendaFiltro === 'todos' || r.status === agendaFiltro)
+  document.getElementById('agendaList').innerHTML = filtradas.map(r => renderReuniaoCard(r)).join('')
+
+  // IA Prioridades
+  document.getElementById('iaPrioridadeList').innerHTML = iaPrioridadesData.map(s => renderIAPrioridade(s)).join('')
+}
+
+function renderReuniaoCard(r) {
+  const st = statusReuniaoConfig(r.status)
+  const pautaId = `pauta-${r.id}`
+  return `<div class="card overflow-hidden">
+    <div style="padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+      <div class="flex items-start gap-12">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0">${r.avatar}</div>
+        <div>
+          <div class="flex items-center gap-8 mb-4">
+            <span style="font-weight:700;font-size:14px">${r.responsavel}</span>
+            <span style="color:var(--muted);font-size:12px">· ${r.papel} de ${r.aluno} · ${r.turma}</span>
+          </div>
+          <div class="flex items-center gap-16" style="flex-wrap:wrap">
+            <span style="font-size:12px;color:var(--muted)">📅 ${r.data} às ${r.hora}</span>
+            <span style="font-size:12px;color:${r.teams?'var(--accent)':'var(--muted)'}">${r.teams?'📹':'📍'} ${r.local}</span>
+          </div>
+        </div>
+      </div>
+      <span class="badge badge-${st.c}">${st.l}</span>
+    </div>
+
+    <div style="padding:0 20px 16px">
+      <button onclick="togglePauta('${pautaId}')" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:8px">
+        ${r.pautaIA?'<span style="color:var(--amber)">✦</span>':''}
+        <span>${r.pautaIA?'Pauta gerada pela IA':'Pauta da reunião'}</span>
+        <span id="${pautaId}-arrow">▼</span>
+      </button>
+      <div id="${pautaId}" style="display:none;background:${r.pautaIA?'var(--amber-light)':'var(--bg)'};border:1px solid ${r.pautaIA?'var(--amber-border)':'var(--border)'};border-radius:8px;padding:12px">
+        ${r.pauta.map(p=>`<div style="display:flex;gap:8px;font-size:12px;color:${r.pautaIA?'#92400e':'var(--muted)'};margin-bottom:4px"><span style="color:${r.pautaIA?'var(--amber)':'var(--muted)'}">•</span>${p}</div>`).join('')}
+      </div>
+      ${r.obs?`<div style="margin-top:8px;background:var(--red-light);border:1px solid var(--red-border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--red)">⚠️ ${r.obs}</div>`:''}
+    </div>
+
+    ${r.teams&&r.status==='confirmado'?`<div style="padding:10px 20px;background:var(--accent-light);border-top:1px solid var(--accent-border);display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;color:var(--accent)">📹 Link Teams gerado e enviado ao responsável</span><button class="btn btn-sm" style="background:var(--accent);color:#fff;font-size:11px" onclick="showToast('🔗 Link copiado!')">Copiar link</button></div>`:''}
+
+    ${r.status==='pendente'&&r.antec>=24?`<div style="padding:8px 20px;background:var(--bg);border-top:1px solid var(--border)"><span style="font-size:11px;color:var(--muted)">⏰ Notificação enviada com ${r.antec}h de antecedência</span></div>`:''}
+  </div>`
+}
+
+function renderIAPrioridade(s) {
+  const pc = prioridadeConfig(s.prioridade)
+  return `<div class="card overflow-hidden${s.prioridade==='critica'?' border-red-200':''}">
+    <div style="padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+      <div class="flex items-start gap-12">
+        <div style="width:40px;height:40px;border-radius:50%;background:var(--bg);color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">${initials(s.responsavel)}</div>
+        <div>
+          <div class="flex items-center gap-8 mb-4">
+            <span style="font-weight:700;font-size:14px">${s.aluno}</span>
+            <span style="color:var(--muted);font-size:12px">· ${s.turma}</span>
+            <span class="badge badge-${pc.c}">${pc.l}</span>
+          </div>
+          <div style="font-weight:600;font-size:12px;margin-bottom:4px">${s.motivo}</div>
+          <div style="font-size:11px;color:var(--muted)">Responsável: ${s.responsavel}</div>
+        </div>
+      </div>
+      ${s.agendado
+        ? `<span class="badge badge-green">✓ Agendado no Teams</span>`
+        : `<button class="btn btn-primary btn-sm" onclick="agendarIA(${s.id})">📹 Agendar no Teams</button>`}
+    </div>
+
+    <div style="padding:0 20px 16px">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px">
+        ${s.detalhes.map(d=>`<div style="display:flex;gap:8px;font-size:11px;color:var(--muted);margin-bottom:3px"><span>•</span>${d}</div>`).join('')}
+      </div>
+      <div class="flex items-center gap-12" style="flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--muted)">📅 Datas sugeridas pela IA:</span>
+        ${s.datas.map(d=>`<span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface)">${d} às ${s.hora}</span>`).join('')}
+      </div>
+      ${s.agendado?`<div style="margin-top:10px;background:var(--accent-light);border:1px solid var(--accent-border);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--accent)">📹 Reunião criada no Microsoft Teams. Link enviado para ${s.responsavel} com 24h de antecedência.</div>`:''}
+    </div>
+  </div>`
+}
+
+function togglePauta(id) {
+  const el = document.getElementById(id)
+  const arrow = document.getElementById(id + '-arrow')
+  const open = el.style.display === 'block'
+  el.style.display = open ? 'none' : 'block'
+  if (arrow) arrow.textContent = open ? '▼' : '▲'
+}
+
+function setAgendaFiltro(f) { agendaFiltro = f; renderAgendamentos() }
+
+function switchAgendaTab(tab, btn) {
+  document.getElementById('agendaTabReunioes').style.display = tab === 'reunioes' ? 'block' : 'none'
+  document.getElementById('agendaTabIA').style.display = tab === 'ia' ? 'block' : 'none'
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+  btn.classList.add('active')
+}
+
+function agendarIA(id) {
+  const s = iaPrioridadesData.find(x => x.id === id)
+  if (s) { s.agendado = true; renderAgendamentos(); showToast('📹 Reunião criada no Microsoft Teams!') }
+}
+
+// ════════════════════════════════════════════════════════
+//  ALUNOS
+// ════════════════════════════════════════════════════════
+function renderAlunos() {
+  const alto  = ALUNOS.filter(a=>a.nivel==='alto').length
+  const medio = ALUNOS.filter(a=>a.nivel==='medio').length
+  const baixo = ALUNOS.filter(a=>a.nivel==='baixo').length
+  document.getElementById('alunosStats').innerHTML = [
+    {l:'Alto risco', v:alto, c:'var(--red)',   bg:'var(--red-light)',   border:'var(--red-border)'},
+    {l:'Médio risco', v:medio, c:'var(--amber)', bg:'var(--amber-light)', border:'var(--amber-border)'},
+    {l:'Baixo risco', v:baixo, c:'var(--green)', bg:'var(--green-light)', border:'var(--green-border)'},
+  ].map(s => `<div style="background:${s.bg};border:1px solid ${s.border};border-radius:var(--radius);padding:16px 18px;text-align:center;cursor:pointer" onclick="filterAlunosRisco('${s.l.split(' ')[0].toLowerCase()}')"><div style="font-size:28px;font-family:'DM Serif Display',serif;font-weight:700;color:${s.c};margin-bottom:4px">${s.v}</div><div style="font-size:12px;color:var(--muted)">${s.l}</div></div>`).join('')
+
+  renderAlunosTable()
+}
+
+function renderAlunosTable() {
+  let filtered = ALUNOS
+  if (alunosBusca) filtered = filtered.filter(a => a.nome.toLowerCase().includes(alunosBusca.toLowerCase()))
+  if (alunosTurma) filtered = filtered.filter(a => a.turma === alunosTurma)
+  if (alunosRisco) filtered = filtered.filter(a => a.nivel === alunosRisco)
+
+  document.getElementById('alunosCount').textContent = `${filtered.length} alunos`
+
+  let html = `<table><thead><tr><th>Aluno</th><th style="text-align:center">Turma</th><th style="text-align:center">Frequência</th><th style="text-align:center">Média</th><th style="text-align:center">Tendência</th><th style="text-align:center">🧠 Score IA</th></tr></thead><tbody>`
+  filtered.forEach(a => {
+    html += `<tr class="aluno-row${selectedAluno===a.id?' selected':''}" onclick="selectAlunoRow(${a.id})">
+      <td><div class="flex items-center gap-8"><div style="width:30px;height:30px;border-radius:50%;background:${nivelColor(a.nivel,'light')};color:${nivelColor(a.nivel,'text')};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${initials(a.nome)}</div><div><div style="font-weight:600">${a.nome}</div><div style="font-size:11px;color:var(--muted)">${a.responsavel}</div></div></div></td>
+      <td style="text-align:center"><span class="tag">${a.turma}</span></td>
+      <td style="text-align:center;font-weight:600;color:${a.freq<75?'var(--red)':'var(--text)'}">${a.freq}%</td>
+      <td style="text-align:center;font-weight:600;color:${mediaColor(a.media)}">${a.media.toFixed(1)}</td>
+      <td style="text-align:center">${sparkline(a.tend.slice(-3), nivelColor(a.nivel,'bar'))}</td>
+      <td style="text-align:center">
+        <div class="flex items-center gap-8" style="justify-content:center">
+          <div class="bar-wrap" style="width:50px"><div class="bar-fill" style="width:${a.score}%;background:${nivelColor(a.nivel,'bar')}"></div></div>
+          ${riscoBadge(a.nivel)}
+        </div>
+      </td>
+    </tr>`
+  })
+  html += '</tbody></table>'
+  document.getElementById('alunosTable').innerHTML = html
+  renderAlunoPanel()
+}
+
+function selectAlunoRow(id) {
+  selectedAluno = selectedAluno === id ? null : id
+  renderAlunosTable()
+}
+
+function renderAlunoPanel() {
+  const panel = document.getElementById('alunoPanel')
+  if (!selectedAluno) { panel.classList.remove('open'); return; }
+  panel.classList.add('open')
+  const a = ALUNOS.find(x => x.id === selectedAluno)
+  if (!a) return
+
+  const insightMap = {
+    alto:  'Padrão de queda contínua. Intervenção imediata recomendada antes do fechamento do bimestre.',
+    medio: 'Tendência de queda moderada. Monitoramento semanal e contato com a família recomendados.',
+    baixo: 'Desempenho estável e acima da média. Nenhuma ação necessária.',
+  }
+
+  document.getElementById('alunoPanelContent').innerHTML = `
+    <div style="background:${nivelColor(a.nivel,'light')};padding:14px 16px;border-bottom:1px solid var(--border)">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-8">
+          <div style="width:40px;height:40px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:${nivelColor(a.nivel,'text')}">${initials(a.nome)}</div>
+          <div>
+            <div style="font-weight:700;font-size:15px">${a.nome}</div>
+            <div style="font-size:11px;color:var(--muted)">Turma ${a.turma} · ${a.responsavel}</div>
+          </div>
+        </div>
+        <button onclick="selectedAluno=null;renderAlunosTable()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px">✕</button>
+      </div>
+    </div>
+    <div style="padding:16px">
+      <div class="score-wrap mb-16">
+        ${scoreRingSVG(a.score, a.nivel)}
+        <div>
+          <div style="margin-bottom:8px">${riscoBadge(a.nivel)}</div>
+          <div class="text-sm text-muted mb-4">Frequência: <strong style="color:${a.freq<75?'var(--red)':'var(--text)'}">${a.freq}%</strong></div>
+          <div class="text-sm text-muted mb-4">Média: <strong style="color:${mediaColor(a.media)}">${a.media.toFixed(1)}</strong></div>
+          <div class="text-sm text-muted">Ocorrências: <strong>${a.ocorr}</strong></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div class="text-xs text-muted font-600 mb-8">Tendência de desempenho</div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px">
+          ${sparklineLarge(a.tend, nivelColor(a.nivel,'bar'))}
+          <div class="flex justify-between mt-4"><span class="text-xs text-muted">5 bimestres</span><span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700">${a.tend[a.tend.length-1].toFixed(1)}</span></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <div class="text-xs text-muted font-600 mb-8">Médias por disciplina</div>
+        ${Object.entries({mat:'Mat.',por:'Por.',cie:'Cie.',his:'His.',geo:'Geo.'}).map(([k,nome])=>{
+          const v = a.disciplinas[k]
+          return `<div class="flex items-center gap-8 mb-6"><span style="font-size:11px;color:var(--muted);width:32px">${nome}</span><div class="bar-wrap"><div class="bar-fill" style="width:${v*10}%;background:${mediaColor(v)}"></div></div><span style="font-size:12px;font-weight:700;color:${mediaColor(v)};width:28px;text-align:right">${v.toFixed(1)}</span></div>`
+        }).join('')}
+      </div>
+
+      <div style="background:var(--amber-light);border:1px solid var(--amber-border);border-radius:8px;padding:12px;margin-bottom:12px">
+        <div class="flex items-center gap-6 mb-6"><span>🧠</span><span style="font-size:12px;font-weight:600;color:#92400e">Insight da IA</span><span class="badge badge-ai">ML</span></div>
+        <p style="font-size:11px;color:#78350f;line-height:1.6">${insightMap[a.nivel]}</p>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:#b45309;margin-top:6px">/api/v1/ia/risco/${a.id}</div>
+      </div>
+
+      <div class="flex flex-col gap-8">
+        <button class="btn btn-primary" style="font-size:12px;justify-content:center" onclick="navigateTo('mensagens')">💬 Mensagem ao responsável</button>
+        <button class="btn btn-secondary" style="font-size:12px;justify-content:center" onclick="navigateTo('agendamentos')">📅 Agendar reunião</button>
+      </div>
+    </div>`
+}
+
+function filterAlunos(v) { alunosBusca = v; renderAlunosTable() }
+function filterAlunosTurma(v) { alunosTurma = v; renderAlunosTable() }
+function filterAlunosRisco(v) { alunosRisco = alunosRisco === v ? '' : v; renderAlunosTable() }
+
+// ════════════════════════════════════════════════════════
+//  MODAL
+// ════════════════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open') }
+function closeModal(id) { document.getElementById(id).classList.remove('open') }
+
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open') })
+})
+
+// NOVA REUNIÃO
+let pautaGerada = false
+function resetPauta() {
+  pautaGerada = false
+  document.getElementById('pautaContent').textContent = 'A IA analisará o histórico do aluno — notas, frequência e ocorrências — e sugerirá os tópicos mais relevantes.'
+  document.getElementById('btnGerarPauta').style.display = 'flex'
+}
+
+function gerarPauta() {
+  const aluno = document.getElementById('reuniaoAluno').value
+  const btn = document.getElementById('btnGerarPauta')
+  btn.textContent = '⟳ Gerando...'
+  btn.disabled = true
+  setTimeout(() => {
+    const pautas = {
+      'Rafael Oliveira': ['Frequência crítica — 71% (mínimo 75%)','Queda em Matemática (média 4.2)','3 ocorrências no bimestre','Plano de recuperação e reforço'],
+      'Lucas Ferreira': ['Frequência em atenção — 78%','Queda progressiva nas notas','Aulas de reforço recomendadas'],
+      'Ana Paula Silva': ['Dificuldades em Português — análise sintática','Desempenho geral satisfatório','Estratégias de apoio em casa'],
+      'Beatriz Santos': ['Reconhecimento por excelência acadêmica','Participação em olimpíadas escolares'],
+    }
+    const items = pautas[aluno] || ['Acompanhamento geral do desempenho','Comunicação escola-família']
+    document.getElementById('pautaContent').innerHTML = items.map(i =>
+      `<div style="display:flex;gap:8px;font-size:12px;color:#78350f;margin-bottom:4px"><span style="color:var(--amber)">•</span>${i}</div>`
+    ).join('') + `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#b45309;margin-top:8px">/api/v1/ia/pauta/{aluno_id}</div>`
+    btn.style.display = 'none'
+    pautaGerada = true
+  }, 1800)
+}
+
+function salvarReuniao() {
+  const aluno = document.getElementById('reuniaoAluno').value
+  const teams = document.getElementById('teamsToggle').checked
+  reunioesData.unshift({
+    id: Date.now(),
+    avatar: aluno.split(' ').map(n=>n[0]).slice(0,2).join(''),
+    responsavel: aluno + ' (responsável)',
+    papel: 'Responsável',
+    aluno, turma: '9A',
+    data: '07/04/2026', hora: '14:00',
+    local: teams ? 'Microsoft Teams' : 'Sala Coordenação',
+    teams,
+    status: 'pendente',
+    pautaIA: pautaGerada,
+    antec: 48,
+    pauta: pautaGerada ? ['Pauta gerada pela IA'] : ['Acompanhamento geral'],
+  })
+  closeModal('modalNovaReuniao')
+  resetPauta()
+  renderAgendamentos()
+  showToast(`✅ Reunião agendada${teams ? ' · Link Teams gerado' : ''}`)
+}
+
+// ════════════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════════════
+function initials(nome) { return nome.split(' ').map(n=>n[0]).slice(0,2).join('') }
+
+function nivelColor(nivel, type) {
+  const map = {
+    alto:  { bar:'#ef4444', light:'#fef2f2', text:'#dc2626', border:'#fecaca' },
+    medio: { bar:'#f59e0b', light:'#fffbeb', text:'#d97706', border:'#fde68a' },
+    baixo: { bar:'#10b981', light:'#ecfdf5', text:'#059669', border:'#a7f3d0' },
+  }
+  return map[nivel]?.[type] || '#888'
+}
+
+function mediaColor(v) {
+  if (v >= 7) return 'var(--green)'
+  if (v >= 5) return 'var(--amber)'
+  return 'var(--red)'
+}
+
+function corBg(cor) {
+  const m = {blue:'#eff6ff',purple:'#f5f3ff',green:'#ecfdf5',amber:'#fffbeb',teal:'#f0fdfa'}
+  return m[cor] || '#f9fafb'
+}
+function corBorder(cor) {
+  const m = {blue:'#bfdbfe',purple:'#ddd6fe',green:'#a7f3d0',amber:'#fde68a',teal:'#99f6e4'}
+  return m[cor] || '#e5e7eb'
+}
+function corText(cor) {
+  const m = {blue:'#1d4ed8',purple:'#6d28d9',green:'#047857',amber:'#b45309',teal:'#0f766e'}
+  return m[cor] || '#374151'
+}
+
+function riscoBadge(nivel) {
+  const map = { alto:'red', medio:'amber', baixo:'green' }
+  const labels = { alto:'Alto risco', medio:'Médio risco', baixo:'Baixo risco' }
+  return `<span class="badge badge-${map[nivel]||'blue'}"><span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>${labels[nivel]||nivel}</span>`
+}
+
+function statusBadge(status) {
+  const m = { pendente:{c:'amber',l:'Aguardando'}, confirmado:{c:'green',l:'Confirmado'}, recusado:{c:'red',l:'Recusado'}, remarcado:{c:'blue',l:'Remarcado'} }
+  const s = m[status] || {c:'blue',l:status}
+  return `<span class="badge badge-${s.c}">${s.l}</span>`
+}
+
+function statusSolConfig(s) {
+  const m = { recebido:{c:'blue',l:'Recebido'}, em_andamento:{c:'amber',l:'Em andamento'}, concluido:{c:'green',l:'Concluído'}, rejeitado:{c:'red',l:'Rejeitado'} }
+  return m[s] || {c:'blue',l:s}
+}
+
+function statusReuniaoConfig(s) {
+  const m = { pendente:{c:'amber',l:'⏳ Aguardando confirmação'}, confirmado:{c:'green',l:'✓ Confirmado'}, recusado:{c:'red',l:'✕ Recusado'}, remarcado:{c:'blue',l:'↺ Novo horário'} }
+  return m[s] || {c:'blue',l:s}
+}
+
+function urgenciaConfig(u) {
+  const m = { alta:{c:'red',l:'Urgente'}, media:{c:'amber',l:'Normal'}, baixa:{c:'green',l:'Baixa'} }
+  return m[u] || {c:'blue',l:u}
+}
+
+function prioridadeConfig(p) {
+  const m = { critica:{c:'red',l:'Crítica'}, alta:{c:'amber',l:'Alta'}, media:{c:'blue',l:'Média'} }
+  return m[p] || {c:'blue',l:p}
+}
+
+function sparkline(data, color = '#3b82f6') {
+  const w = 60, h = 24, pad = 3
+  const min = Math.min(...data), max = Math.max(...data)
+  const range = max - min || 1
+  const pts = data.map((v, i) => {
+    const x = pad + (i / (data.length - 1)) * (w - pad * 2)
+    const y = h - pad - ((v - min) / range) * (h - pad * 2)
+    return `${x},${y}`
+  }).join(' ')
+  const up = data[data.length-1] >= data[data.length-2]
+  return `<div class="sparkline"><svg width="${w}" height="${h}"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/></svg><span style="font-size:10px;color:${up?'var(--green)':'var(--red)'}">${up?'↑':'↓'}</span></div>`
+}
+
+function sparklineLarge(data, color = '#3b82f6') {
+  const w = 260, h = 48, pad = 6
+  const min = Math.min(...data), max = Math.max(...data)
+  const range = max - min || 1
+  const pts = data.map((v, i) => {
+    const x = pad + (i / (data.length - 1)) * (w - pad * 2)
+    const y = h - pad - ((v - min) / range) * (h - pad * 2)
+    return `${x},${y}`
+  }).join(' ')
+  const lastPt = data.map((v, i) => {
+    const x = pad + (i / (data.length - 1)) * (w - pad * 2)
+    const y = h - pad - ((v - min) / range) * (h - pad * 2)
+    return {x, y}
+  })
+  const last = lastPt[lastPt.length - 1]
+  return `<svg width="${w}" height="${h}" style="overflow:visible"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/><circle cx="${last.x}" cy="${last.y}" r="4" fill="${color}"/></svg>`
+}
+
+function scoreRingSVG(score, nivel) {
+  const color = nivelColor(nivel, 'bar')
+  const r = 30, cx = 38, cy = 38
+  const circ = 2 * Math.PI * r
+  const dash = (score / 100) * circ
+  return `<svg width="76" height="76"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="6"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="6" stroke-dasharray="${dash} ${circ}" stroke-linecap="round" transform="rotate(-90 ${cx} ${cy})"/><text x="${cx}" y="${cy-3}" text-anchor="middle" font-size="14" font-weight="700" fill="${color}" font-family="DM Serif Display,serif">${score}</text><text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="9" fill="#9ca3af" font-family="DM Sans,sans-serif">score</text></svg>`
+}
+
+// TOAST
+function showToast(msg) {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.classList.add('show')
+  setTimeout(() => t.classList.remove('show'), 3500)
+}
+
+// ════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  buildNav()
+  renderDashboard()
+})
+</script>
+</body>
+</html>
